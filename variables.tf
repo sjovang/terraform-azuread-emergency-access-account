@@ -42,5 +42,6 @@ variable "log_analytics_workspace_retention_in_days" {
 
 variable "security_email_alerts" {
   type    = string
+  default = ""
   description = "Email address to send security alerts when Emergency access account is used"
 }
