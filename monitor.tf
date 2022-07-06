@@ -20,6 +20,8 @@ resource "azurerm_monitor_aad_diagnostic_setting" "signin_logs" {
   log {
     category = "SignInLogs"
     retention_policy {
+        enabled = true
+        days = 30
     }
   }
 }
