@@ -61,7 +61,7 @@ resource "azurerm_monitor_scheduled_query_rules_alert" "breakglass_signin" {
   time_window = 30
   throttling  = 30
   trigger {
-    operator = "GreaterThan"
+    operator = "GreaterThanOrEqual"
     threshold = 1
   }
 }
