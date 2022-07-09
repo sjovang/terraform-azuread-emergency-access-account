@@ -5,7 +5,7 @@ Implement an [Emergency cccess account](https://docs.microsoft.com/en-us/azure/a
 This account should also be exempt from conditional access policies that enforce MFA, logins should be monitored, and validated regularly.
 
 **Note:**
-Set `azure_ad_p2 == true` if your tenant has Azure AD P2-licenses to enable alerts from sign-in logs
+Set `enable_alerts == true` if your tenant has Azure AD P2-licenses to enable alerts from sign-in logs
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -46,7 +46,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_azure_ad_p2"></a> [azure\_ad\_p2](#input\_azure\_ad\_p2) | Set to true if tenant has Azure AD P2-licenses to enable sign-in alerts | `bool` | `false` | no |
+| <a name="input_enable_alerts"></a> [azure\_ad\_p2](#input\_azure\_ad\_p2) | Set to true if tenant has Azure AD P2-licenses to enable sign-in alerts | `bool` | `false` | no |
 | <a name="input_azure_location"></a> [azure\_location](#input\_azure\_location) | Region in Azure | `string` | `"westeurope"` | no |
 | <a name="input_log_analytics_resource_group_name"></a> [log\_analytics\_resource\_group\_name](#input\_log\_analytics\_resource\_group\_name) | Name of the resource group for the log analytics workspace | `string` | `"RG-AzureAD-Diagnostics"` | no |
 | <a name="input_log_analytics_workspace_name"></a> [log\_analytics\_workspace\_name](#input\_log\_analytics\_workspace\_name) | Name of the log analytics workspace | `string` | `"LA-AzureAD-Diagnostics"` | no |

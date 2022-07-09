@@ -18,6 +18,5 @@ provider "azurerm" {
 }
 
 module "breakglass" {
-  source   = "sjovang/emergency-access-account/azuread"
-  password = var.password
+  source = "sjovang/emergency-access-account/azuread"
 }
