@@ -29,22 +29,38 @@ resource "random_password" "emergency_user_password" {
   length = 64
 }
 
+locals {
+  password = var.emergency_access_account_password == "" ? random_password.emergency_user_password.result : var.emergency_access_account_password
+}
+
 resource "azuread_user" "emergency_access_account" {
-  user_principal_name         = "${var.emergency_access_username}@${data.azuread_domains.initial.domains.0.domain_name}"
-  display_name                = var.emergency_access_display_name
+  user_principal_name         = "${var.emergency_access_account_username}@${data.azuread_domains.initial.domains.0.domain_name}"
+  display_name                = var.emergency_access_account_display_name
   disable_password_expiration = true
-  password                    = random_password.emergency_access_account.result
+  password                    = local.password
 }
 
 resource "azuread_directory_role_assignment" "global_administrator" {
   role_id             = "62e90394-69f5-4237-9190-012177145e10"
-  principal_object_id = resource.azuread_user.breakglass.object_id
+  principal_object_id = resource.azuread_user.emergency_access_account.object_id
 }
 
 resource "azurerm_role_assignment" "owner" {
   scope                = data.azurerm_management_group.root.id
   role_definition_name = "Owner"
-  principal_id         = resource.azuread_user.breakglass.object_id
+  principal_id         = resource.azuread_user.emergency_access_account.object_id
+}
+ 
+resource "azurerm_monitor_action_group" "email_alerts" {
+  count               = var.enable_alerts == true ? 1 : 0
+  name                = "Security-Alerts"
+  resource_group_name = var.log_analytics_workspace.resource_group_name
+  short_name          = "secalerts"
+
+  email_receiver {
+    name          = "Security-Mail-Alerts"
+    email_address = var.email_alerts_address
+  }
 }
 
 resource "azurerm_monitor_scheduled_query_rules_alert" "emergency_account_signin" {
@@ -58,7 +74,7 @@ resource "azurerm_monitor_scheduled_query_rules_alert" "emergency_account_signin
 
   # This should probably use a for_each and enable multiple action groups to receive alerts
   action {
-    action_group  = azurerm_monitor_action_group.security_alerts.*.id
+    action_group  = azurerm_monitor_action_group.email_alerts.*.id
     email_subject = "Sign-in from Emergency access account detected"
   }
 
@@ -75,17 +91,5 @@ resource "azurerm_monitor_scheduled_query_rules_alert" "emergency_account_signin
   trigger {
     operator  = "GreaterThanOrEqual"
     threshold = 1
-  }
-}
-
-resource "azurerm_monitor_action_group" "email_alerts" {
-  count               = var.enable_alerts == true ? 1 : 0
-  name                = "Security-Alerts"
-  resource_group_name = var.log_analytics_workspace.resource_group_name
-  short_name          = "secalerts"
-
-  email_receiver {
-    name          = "Security-Mail-Alerts"
-    email_address = var.security_email_alerts
   }
 }

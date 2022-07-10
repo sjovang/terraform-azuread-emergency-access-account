@@ -2,7 +2,7 @@ terraform {
   required_providers {
     azuread = {
       source  = "hashicorp/azuread"
-      version = "~> 2.0"
+      version = "= 2.25.0"
     }
     azurerm = {
       source  = "hashicorp/azurerm"
@@ -41,10 +41,10 @@ resource "azurerm_monitor_aad_diagnostic_setting" "signin_logs" {
   }
 }
 
-module "breakglass" {
+module "emergency_access" {
   #source   = "sjovang/emergency-access-account/azuread"
   source                  = "../../"
-  enable_email_alerts     = true
+  enable_alerts     = true
   email_alerts_address    = "soc@contoso.com"
   log_analytics_workspace = azurerm_log_analytics_workspace.example
 }

@@ -10,27 +10,44 @@ variable "enable_alerts" {
   description = "Set up alerts for account sign-ins. Require Azure AD Premium-licenses"
 }
 
-variable "email_alerts_addresss" {
+variable "email_alerts_address" {
   type        = string
   default     = ""
   description = "Email address to send security alerts when emergency access account is used for sign-in"
 }
 
-variable "emergency_access_username" {
+variable "emergency_access_account_display_name" {
   type        = string
-  default     = "breakglass"
-  description = "Username for the emergency access account. Only specify the username, not the full UserPrincipalName"
-}
-
-variable "emergency_access_display_name" {
-  type     = string
-  default  = "Emergency access account"
+  default     = "Emergency access account"
   description = "Display name for emergency access account in Azure AD"
 }
 
+variable "emergency_access_account_password" {
+  type        = string
+  sensitive   = true
+  default     = ""
+  description = "Password for emergency access account. If not specified a random password will be generated"
+}
+
+variable "emergency_access_account_username" {
+  type        = string
+  default     = "emergencyaccess"
+  description = "Username for emergency access account. Only specify the username, not the full UserPrincipalName"
+}
+
 variable "log_analytics_workspace" {
-  type = map(object)
-  default = ""
+  type = object({
+    id                  = string
+    name                = string
+    resource_group_name = string
+    location            = string
+  })
+  default = {
+    id                  = null
+    name                = null
+    resource_group_name = null
+    location            = null
+  }
   description = "Log Analytics Workspace set up to stream Azure AD sign-in logs"
 }
 

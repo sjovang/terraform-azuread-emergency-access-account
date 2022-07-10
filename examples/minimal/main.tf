@@ -17,6 +17,6 @@ provider "azurerm" {
   features {}
 }
 
-module "breakglass" {
+module "emergency_access" {
   source = "sjovang/emergency-access-account/azuread"
 }
