@@ -1,9 +1,3 @@
-variable "azure_location" {
-  type        = string
-  default     = "westeurope"
-  description = "Region in Azure"
-}
-
 variable "enable_alerts" {
   type        = bool
   default     = false
