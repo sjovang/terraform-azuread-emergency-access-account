@@ -12,7 +12,7 @@ Set `enable_alerts == true` if your tenant has Azure AD P2-licenses to enable al
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_azuread"></a> [azuread](#requirement\_azuread) | >= 2.0, <= 2.25.0 |
+| <a name="requirement_azuread"></a> [azuread](#requirement\_azuread) | >= 2.0, != 2.26.0 |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | >= 3.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | >= 3.0 |
 
@@ -20,7 +20,7 @@ Set `enable_alerts == true` if your tenant has Azure AD P2-licenses to enable al
 
 | Name | Version |
 |------|---------|
-| <a name="provider_azuread"></a> [azuread](#provider\_azuread) | >= 2.0, <= 2.25.0 |
+| <a name="provider_azuread"></a> [azuread](#provider\_azuread) | >= 2.0, != 2.26.0 |
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >= 3.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | >= 3.0 |
 
