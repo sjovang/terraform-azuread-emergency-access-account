@@ -9,6 +9,7 @@ on:
 jobs:
   tests:
     name: 'Terraform Tests'
+    runs-on: ubuntu-latest
 
     defaults:
       run:
