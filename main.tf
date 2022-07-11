@@ -2,7 +2,7 @@ terraform {
   required_providers {
     azuread = {
       source  = "hashicorp/azuread"
-      version = ">= 2.0, <= 2.25.0"
+      version = ">= 2.0, != 2.26.0"
     }
     azurerm = {
       source  = "hashicorp/azurerm"
@@ -50,7 +50,7 @@ resource "azurerm_role_assignment" "owner" {
   role_definition_name = "Owner"
   principal_id         = resource.azuread_user.emergency_access_account.object_id
 }
- 
+
 resource "azurerm_monitor_action_group" "email_alerts" {
   count               = var.enable_alerts == true ? 1 : 0
   name                = "Security-Alerts"

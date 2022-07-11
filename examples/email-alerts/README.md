@@ -1,3 +1,3 @@
 # Emergency access account-example
 
-Enable email-alerts on account sign-ins
+Deploy Log Analytics Workspace, enable Azure AD Diagnostics to stream Sign-In logs and setup emergency access account with email alerts

@@ -1,6 +1,6 @@
 # Emergency Access Account
 
-Implement an [Emergency cccess account](https://docs.microsoft.com/en-us/azure/active-directory/roles/security-emergency-access), assign it the Global Administrator-role and Owner-role on the (root) management group.
+Implement an [Emergency access account](https://docs.microsoft.com/en-us/azure/active-directory/roles/security-emergency-access), assign it the Global Administrator-role and Owner-role on the (root) management group.
 
 This account should also be exempt from conditional access policies that enforce MFA, logins should be monitored, and validated regularly.
 
