@@ -1,3 +1,47 @@
+variable "username_prefix" {
+  type        = string
+  default     = ""
+  description = "Add an optional prefix for the generated display name and user principal name"
+}
+
+variable "number_of_emergency_access_accounts" {
+  type        = number
+  default     = 2
+  description = "Define how many accounts to create"
+}
+
+variable "use_common_alert_schema" {
+  type        = bool
+  default     = true
+  description = "Enable/Disable the common alert schema for all alerts"
+}
+
+variable "email_receiver" {
+  type        = list(string)
+  default     = []
+  description = "List of mail addresses for triggered alerts"
+}
+
+variable "alerts_evaluation_frequency" {
+  type        = string
+  default     = "PT5M"
+  description = "How often the scheduled query rule is evaluated, represented in ISO 8601 duration format"
+}
+
+variable "alerts_window_duration" {
+  type        = string
+  default     = "PT5M"
+  description = "Specifies the period of time in ISO 8601 duration format on which the Scheduled Query Rule will be executed (bin size)"
+}
+
+variable "tags" {
+  type        = map(any)
+  default     = {}
+  description = "Add tags to all supported resources"
+}
+
+// OLD variables are below
+
 variable "enable_alerts" {
   type        = bool
   default     = false
