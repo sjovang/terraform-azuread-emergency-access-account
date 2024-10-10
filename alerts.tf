@@ -1,11 +1,11 @@
 resource "azurerm_monitor_action_group" "this" {
-  count               = var.log_analytics_workspace != null ? 1 : 0
+  count               = var.log_analytics_workspace.id != null ? 1 : 0
   name                = "ag-emergency-access-alerts"
   resource_group_name = var.log_analytics_workspace.resource_group_name
   short_name          = "eaa-signin"
 
   dynamic "email_receiver" {
-    for_each = coalesce(try(var.alerts_settings.email_receiver, null), [])
+    for_each = coalesce(try(var.alerts_settings.email_receivers, null), [])
     content {
         name = "${email_receiver.value}-email"
         email_address = email_receiver.value
@@ -14,7 +14,7 @@ resource "azurerm_monitor_action_group" "this" {
   }
 
   dynamic "sms_receiver" {
-    for_each = coalesce(try(var.alerts_settings.sms_receiver, null), [])
+    for_each = coalesce(try(var.alerts_settings.sms_receivers, null), [])
     content {
         name = sms_receiver.value.phone_number
         country_code = sms_receiver.value.country_code
@@ -24,7 +24,7 @@ resource "azurerm_monitor_action_group" "this" {
 }
 
 resource "azurerm_monitor_scheduled_query_rules_alert_v2" "this" {
-  count               = var.log_analytics_workspace != null ? 1 : 0
+  count               = var.log_analytics_workspace.id != null ? 1 : 0
   name                = "EmergencyAccount-Signin"
   description         = "Alert when emergency access account is used for sign-ins"
   location            = var.log_analytics_workspace.location

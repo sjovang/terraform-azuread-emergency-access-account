@@ -1,4 +1,4 @@
-name: 'Terraform Tests'
+name: 'Terraform format and style'
 
 on:
   push:
@@ -8,23 +8,23 @@ on:
 
 jobs:
   tests:
-    name: 'Terraform Tests'
+    name: 'Terraform format and style'
     runs-on: ubuntu-latest
         
     steps:
     - uses: actions/checkout@v2
     - uses: hashicorp/setup-terraform@v2
 
+    - name: Terraform init
+      id: init
+      run: terraform init -backend=false
+
     - name: Terraform fmt
       id: fmt
       run: terraform fmt -check
       continue-on-error: true
 
-    - name: Terraform Init
-      id: init
-      run: terraform init
-
-    - name: Terraform Validate
+    - name: Terraform validate
       id: validate
       run: terraform validate -no-color
 

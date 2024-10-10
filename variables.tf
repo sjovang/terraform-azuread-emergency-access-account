@@ -4,11 +4,11 @@ variable "alerts_evaluation_frequency" {
   description = "How often the scheduled query rule is evaluated, represented in ISO 8601 duration format"
 }
 
-variable "alerts_settings" {
+variable "alert_settings" {
   type = object({
     use_common_alert_schema = optional(bool,true)
-    email_receiver = optional(list(string), [])
-    sms_receiver = optional(list(object({
+    email_receivers = optional(list(string), [])
+    sms_receivers = optional(list(object({
       country_code = number
       phone_number = number
     })))
@@ -23,12 +23,6 @@ variable "alerts_window_duration" {
   description = "Specifies the period of time in ISO 8601 duration format on which the Scheduled Query Rule will be executed (bin size)"
 }
 
-variable "email_receiver" {
-  type        = list(string)
-  default     = []
-  description = "List of mail addresses for triggered alerts"
-}
-
 variable "log_analytics_workspace" {
   type = object({
     id                  = string
@@ -36,7 +30,12 @@ variable "log_analytics_workspace" {
     resource_group_name = string
     location            = string
   })
-  nullable = true
+  default = object({
+    id                  = null
+    name                = null
+    resource_group_name = null
+    location            = null
+  })
   description = "Log Analytics Workspace set up to stream EntraID sign-in logs"
 }
 
@@ -47,7 +46,7 @@ variable "number_of_emergency_access_accounts" {
 }
 
 variable "tags" {
-  type        = map(any)
+  type        = map(string)
   default     = {}
   description = "Add tags to all supported resources"
 }
