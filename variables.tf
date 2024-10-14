@@ -34,18 +34,18 @@ variable "authentication_strength_policy_combinations" {
 }
 
 variable "conditional_access_policy_id" {
-  type = number
-  default = 99
+  type        = number
+  default     = 99
   description = "ID used to generate conditional access policy. Will create a name on the following format: CA<ID>-Emergency-access-accounts"
 }
 
 variable "conditional_access_policy_state" {
-  type = string
-  default = "enabled"
+  type        = string
+  default     = "enabled"
   description = "Set the enforcement mode for the conditional access policy"
 
   validation {
-    condition = can(regex("^(enabled|disabled|enabledForReportingButNotEnforced)$", var.conditional_access_policy_state))
+    condition     = can(regex("^(enabled|disabled|enabledForReportingButNotEnforced)$", var.conditional_access_policy_state))
     error_message = "Allowed values: enabled, disabled, enabledForReportingButNotEnforced"
   }
 }
@@ -76,6 +76,12 @@ variable "tags" {
   type        = map(string)
   default     = {}
   description = "Add tags to all supported resources"
+}
+
+variable "use_human_readable_passwords" {
+  type        = bool
+  default     = true
+  description = "The default behaviour is to generate a human readable password that is easy to print and store in a safe, set to false to generate complex passwords instead"
 }
 
 variable "username_prefix" {

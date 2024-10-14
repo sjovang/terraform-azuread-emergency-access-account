@@ -5,7 +5,7 @@ resource "azurerm_monitor_action_group" "this" {
   short_name          = "eaa-signin"
 
   dynamic "email_receiver" {
-    for_each = coalesce(try(var.alerts_settings.email_receivers, null), [])
+    for_each = coalesce(try(var.alert_settings.email_receivers, null), [])
     content {
       name                    = "${email_receiver.value}-email"
       email_address           = email_receiver.value
@@ -14,7 +14,7 @@ resource "azurerm_monitor_action_group" "this" {
   }
 
   dynamic "sms_receiver" {
-    for_each = coalesce(try(var.alerts_settings.sms_receivers, null), [])
+    for_each = coalesce(try(var.alert_settings.sms_receivers, null), [])
     content {
       name         = sms_receiver.value.phone_number
       country_code = sms_receiver.value.country_code

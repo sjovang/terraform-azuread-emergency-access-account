@@ -2,7 +2,7 @@ terraform {
   required_providers {
     azuread = {
       source  = "hashicorp/azuread"
-      version = ">= 2.0, != 2.26.0"
+      version = ">= 2.44"
     }
     azurerm = {
       source  = "hashicorp/azurerm"
@@ -19,21 +19,29 @@ data "azuread_domains" "initial" {
   only_initial = true
 }
 
-locals {
-  emergency_access_accounts = toset([for u in range(1, var.number_of_emergency_access_accounts + 2) : format("%s-emergency-access-%02s", var.username_prefix, u)])
-}
-
-resource "random_password" "emergency_user_password" {
-  for_each = local.emergency_access_accounts
+resource "random_password" "emergency_account_password" {
+  for_each = var.use_human_readable_passwords == false ? local.emergency_access_accounts : []
   length   = 64
 }
+
+resource "random_pet" "emergency_account_password" {
+  for_each = var.use_human_readable_passwords == true ? local.emergency_access_accounts : []
+  length   = 10
+}
+
+locals {
+  emergency_access_accounts  = toset([for u in range(1, var.number_of_emergency_access_accounts + 2) : format("%s-emergency-access-%02s", var.username_prefix, u)])
+  emergency_account_password = var.use_human_readable_passwords == true ? random_pet.emergency_account_password : random_password.emergency_account_password
+}
+
+
 
 resource "azuread_user" "emergency_access_account" {
   for_each                    = local.emergency_access_accounts
   user_principal_name         = "${each.key}@${data.azuread_domains.initial.domains.0.domain_name}"
   display_name                = each.key
   disable_password_expiration = true
-  password                    = random_password.emergency_user_password[each.key]
+  password                    = local.emergency_account_password[each.key]
 }
 
 resource "azuread_directory_role" "global_administrator" {

@@ -1,6 +1,6 @@
 resource "azuread_authentication_strength_policy" "this" {
-  display_name = "Emergency access accounts policy"
-  description  = "Require phishing resistant MFA for emergency access accounts"
+  display_name         = "Emergency access accounts policy"
+  description          = "Require phishing resistant MFA for emergency access accounts"
   allowed_combinations = var.authentication_strength_policy_combinations
 }
 
@@ -16,7 +16,9 @@ resource "azuread_conditional_access_policy" "this" {
     }
 
     users {
-      included_users = null
+      included_users = [
+        for k, u in azuread_user.emergency_access_account : u.id
+      ]
     }
   }
 
