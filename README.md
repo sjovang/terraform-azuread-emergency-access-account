@@ -10,7 +10,7 @@ The following requirements are needed by this module:
 
 - <a name="requirement_azuread"></a> [azuread](#requirement\_azuread) (>= 2.0, != 2.26.0)
 
-- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (>= 3.0)
+- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (>= 3.20)
 
 - <a name="requirement_random"></a> [random](#requirement\_random) (>= 3.0)
 
@@ -18,10 +18,13 @@ The following requirements are needed by this module:
 
 The following resources are used by this module:
 
+- [azuread_authentication_strength_policy.this](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/authentication_strength_policy) (resource)
+- [azuread_conditional_access_policy.this](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/conditional_access_policy) (resource)
+- [azuread_directory_role.global_administrator](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/directory_role) (resource)
 - [azuread_directory_role_assignment.global_administrator](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/directory_role_assignment) (resource)
 - [azuread_user.emergency_access_account](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/user) (resource)
-- [azurerm_monitor_action_group.email_alerts](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/monitor_action_group) (resource)
-- [azurerm_monitor_scheduled_query_rules_alert.emergency_account_signin](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/monitor_scheduled_query_rules_alert) (resource)
+- [azurerm_monitor_action_group.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/monitor_action_group) (resource)
+- [azurerm_monitor_scheduled_query_rules_alert_v2.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/monitor_scheduled_query_rules_alert_v2) (resource)
 - [azurerm_role_assignment.owner](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) (resource)
 - [random_password.emergency_user_password](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) (resource)
 - [azuread_domains.initial](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/data-sources/domains) (data source)
@@ -36,6 +39,25 @@ No required inputs.
 ## Optional Inputs
 
 The following input variables are optional (have default values):
+
+### <a name="input_alert_settings"></a> [alert\_settings](#input\_alert\_settings)
+
+Description: Configure settings for emergency access account sign in alerts
+
+Type:
+
+```hcl
+object({
+    use_common_alert_schema = optional(bool, true)
+    email_receivers         = optional(list(string), [])
+    sms_receivers = optional(list(object({
+      country_code = number
+      phone_number = number
+    })))
+  })
+```
+
+Default: `{}`
 
 ### <a name="input_alerts_evaluation_frequency"></a> [alerts\_evaluation\_frequency](#input\_alerts\_evaluation\_frequency)
 
@@ -53,57 +75,41 @@ Type: `string`
 
 Default: `"PT5M"`
 
-### <a name="input_email_alerts_address"></a> [email\_alerts\_address](#input\_email\_alerts\_address)
+### <a name="input_authentication_strength_policy_combinations"></a> [authentication\_strength\_policy\_combinations](#input\_authentication\_strength\_policy\_combinations)
 
-Description: Email address to send security alerts when emergency access account is used for sign-in
-
-Type: `string`
-
-Default: `""`
-
-### <a name="input_email_receiver"></a> [email\_receiver](#input\_email\_receiver)
-
-Description: List of mail addresses for triggered alerts
+Description: value
 
 Type: `list(string)`
 
-Default: `[]`
+Default:
 
-### <a name="input_emergency_access_account_display_name"></a> [emergency\_access\_account\_display\_name](#input\_emergency\_access\_account\_display\_name)
+```json
+[
+  "fido2",
+  "password",
+  "temporaryAccessPassOneTime"
+]
+```
 
-Description: Display name for emergency access account in Azure AD
+### <a name="input_conditional_access_policy_id"></a> [conditional\_access\_policy\_id](#input\_conditional\_access\_policy\_id)
+
+Description: ID used to generate conditional access policy. Will create a name on the following format: CA<ID>-Emergency-access-accounts
+
+Type: `number`
+
+Default: `99`
+
+### <a name="input_conditional_access_policy_state"></a> [conditional\_access\_policy\_state](#input\_conditional\_access\_policy\_state)
+
+Description: Set the enforcement mode for the conditional access policy
 
 Type: `string`
 
-Default: `"Emergency access account"`
-
-### <a name="input_emergency_access_account_password"></a> [emergency\_access\_account\_password](#input\_emergency\_access\_account\_password)
-
-Description: Password for emergency access account. If not specified a random password will be generated
-
-Type: `string`
-
-Default: `""`
-
-### <a name="input_emergency_access_account_username"></a> [emergency\_access\_account\_username](#input\_emergency\_access\_account\_username)
-
-Description: Username for emergency access account. Only specify the username, not the full UserPrincipalName
-
-Type: `string`
-
-Default: `"emergencyaccess"`
-
-### <a name="input_enable_alerts"></a> [enable\_alerts](#input\_enable\_alerts)
-
-Description: Set up alerts for account sign-ins. Require Azure AD Premium-licenses
-
-Type: `bool`
-
-Default: `false`
+Default: `"enabled"`
 
 ### <a name="input_log_analytics_workspace"></a> [log\_analytics\_workspace](#input\_log\_analytics\_workspace)
 
-Description: Log Analytics Workspace set up to stream Azure AD sign-in logs
+Description: Log Analytics Workspace set up to stream EntraID sign-in logs
 
 Type:
 
@@ -139,17 +145,9 @@ Default: `2`
 
 Description: Add tags to all supported resources
 
-Type: `map(any)`
+Type: `map(string)`
 
 Default: `{}`
-
-### <a name="input_use_common_alert_schema"></a> [use\_common\_alert\_schema](#input\_use\_common\_alert\_schema)
-
-Description: Enable/Disable the common alert schema for all alerts
-
-Type: `bool`
-
-Default: `true`
 
 ### <a name="input_username_prefix"></a> [username\_prefix](#input\_username\_prefix)
 

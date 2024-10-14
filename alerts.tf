@@ -7,18 +7,18 @@ resource "azurerm_monitor_action_group" "this" {
   dynamic "email_receiver" {
     for_each = coalesce(try(var.alerts_settings.email_receivers, null), [])
     content {
-        name = "${email_receiver.value}-email"
-        email_address = email_receiver.value
-        use_common_alert_schema = var.alerts_settings.use_common_alert_schema
+      name                    = "${email_receiver.value}-email"
+      email_address           = email_receiver.value
+      use_common_alert_schema = var.alerts_settings.use_common_alert_schema
     }
   }
 
   dynamic "sms_receiver" {
     for_each = coalesce(try(var.alerts_settings.sms_receivers, null), [])
     content {
-        name = sms_receiver.value.phone_number
-        country_code = sms_receiver.value.country_code
-        phone_number = sms_receiver.value.phone_number
+      name         = sms_receiver.value.phone_number
+      country_code = sms_receiver.value.country_code
+      phone_number = sms_receiver.value.phone_number
     }
   }
 }
