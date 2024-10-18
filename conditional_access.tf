@@ -1,5 +1,5 @@
 resource "azuread_authentication_strength_policy" "this" {
-  display_name         = "Emergency access accounts policy"
+  display_name         = "EmergencyAccess"
   description          = "Require phishing resistant MFA for emergency access accounts"
   allowed_combinations = var.authentication_strength_policy_combinations
 }
@@ -25,10 +25,5 @@ resource "azuread_conditional_access_policy" "this" {
   grant_controls {
     authentication_strength_policy_id = azuread_authentication_strength_policy.this.id
     operator                          = "OR"
-  }
-
-  session_controls {
-    persistent_browser_mode    = "never"
-    sign_in_frequency_interval = "everyTime"
   }
 }

@@ -1,7 +1,12 @@
+resource "azurerm_resource_group" "alerts" {
+  name     = "rg-emergency-access-alerts"
+  location = var.log_analytics_workspace.location
+}
+
 resource "azurerm_monitor_action_group" "this" {
-  count               = var.log_analytics_workspace.id != null ? 1 : 0
+  count               = var.enable_alerts == true ? 1 : 0
   name                = "ag-emergency-access-alerts"
-  resource_group_name = var.log_analytics_workspace.resource_group_name
+  resource_group_name = azurerm_resource_group.alerts.name
   short_name          = "eaa-signin"
 
   dynamic "email_receiver" {
@@ -9,7 +14,7 @@ resource "azurerm_monitor_action_group" "this" {
     content {
       name                    = "${email_receiver.value}-email"
       email_address           = email_receiver.value
-      use_common_alert_schema = var.alerts_settings.use_common_alert_schema
+      use_common_alert_schema = var.alert_settings.use_common_alert_schema
     }
   }
 
@@ -24,11 +29,11 @@ resource "azurerm_monitor_action_group" "this" {
 }
 
 resource "azurerm_monitor_scheduled_query_rules_alert_v2" "this" {
-  count               = var.log_analytics_workspace.id != null ? 1 : 0
+  count               = var.enable_alerts == true ? 1 : 0
   name                = "EmergencyAccount-Signin"
   description         = "Alert when emergency access account is used for sign-ins"
-  location            = var.log_analytics_workspace.location
-  resource_group_name = var.log_analytics_workspace.resource_group_name
+  location            = azurerm_resource_group.alerts.location
+  resource_group_name = azurerm_resource_group.alerts.name
 
   scopes = [
     var.log_analytics_workspace.id

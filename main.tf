@@ -30,8 +30,7 @@ resource "random_pet" "emergency_account_password" {
 }
 
 locals {
-  emergency_access_accounts  = toset([for u in range(1, var.number_of_emergency_access_accounts + 2) : format("%s-emergency-access-%02s", var.username_prefix, u)])
-  emergency_account_password = var.use_human_readable_passwords == true ? random_pet.emergency_account_password : random_password.emergency_account_password
+  emergency_access_accounts = toset([for u in range(1, var.number_of_emergency_access_accounts + 1) : format("%semergency-access-%02s", var.username_prefix != "" ? format("%s-", var.username_prefix) : "", u)])
 }
 
 
@@ -41,7 +40,7 @@ resource "azuread_user" "emergency_access_account" {
   user_principal_name         = "${each.key}@${data.azuread_domains.initial.domains.0.domain_name}"
   display_name                = each.key
   disable_password_expiration = true
-  password                    = local.emergency_account_password[each.key]
+  password                    = var.use_human_readable_passwords == true ? random_pet.emergency_account_password[each.key].id : random_password.emergency_account_password[each.key].result
 }
 
 resource "azuread_directory_role" "global_administrator" {

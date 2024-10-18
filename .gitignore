@@ -12,3 +12,8 @@ override.tf.json
 .terraformrc
 terraform.rc
 .terraform.lock.hcl
+
+# Ignore local azure cli env and .env files
+.azure
+.*.envrc
+!.envrc

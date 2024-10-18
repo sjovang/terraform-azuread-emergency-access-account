@@ -27,15 +27,14 @@ variable "authentication_strength_policy_combinations" {
   type = list(string)
   default = [
     "fido2",
-    "password",
     "temporaryAccessPassOneTime"
   ]
-  description = "value"
+  description = "Allowed combinations for authentication. temporary access pass are default for initial setup"
 }
 
 variable "conditional_access_policy_id" {
   type        = number
-  default     = 99
+  default     = 98
   description = "ID used to generate conditional access policy. Will create a name on the following format: CA<ID>-Emergency-access-accounts"
 }
 
@@ -50,6 +49,12 @@ variable "conditional_access_policy_state" {
   }
 }
 
+variable "enable_alerts" {
+  type        = bool
+  default     = false
+  description = "Enable sign-in alerts"
+}
+
 variable "log_analytics_workspace" {
   type = object({
     id                  = string
@@ -57,12 +62,7 @@ variable "log_analytics_workspace" {
     resource_group_name = string
     location            = string
   })
-  default = {
-    id                  = null
-    name                = null
-    resource_group_name = null
-    location            = null
-  }
+  nullable    = true
   description = "Log Analytics Workspace set up to stream EntraID sign-in logs"
 }
 
