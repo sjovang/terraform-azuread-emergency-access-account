@@ -75,6 +75,16 @@ module "emergency_access" {
     description          = "example"
     managed-by-terraform = true
   }
-  use_human_readable_passwords = false
   username_prefix              = ""
+}
+
+# Example output from module. Can be used to save username and password in vaults or secrets managers
+output "emergency_access_users" {
+  value = {
+    for k, u in module.emergency_access.emergency_access_account : k => {
+      user_principal_name = u.user_principal_name
+      password = u.password
+    }
+  }
+  sensitive = true
 }

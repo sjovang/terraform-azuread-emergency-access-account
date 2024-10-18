@@ -24,7 +24,7 @@ provider "azurerm" {
 }
 
 module "emergency_access" {
-  source = "sjovang/emergency-access-account/azuread"
+  source = "../.."
 }
 ```
 
@@ -60,7 +60,7 @@ The following Modules are called:
 
 ### <a name="module_emergency_access"></a> [emergency\_access](#module\_emergency\_access)
 
-Source: sjovang/emergency-access-account/azuread
+Source: ../..
 
 Version:
 <!-- END_TF_DOCS -->

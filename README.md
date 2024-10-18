@@ -3,6 +3,13 @@
 
 Implement [Emergency access accounts](https://docs.microsoft.com/en-us/azure/active-directory/roles/security-emergency-access), assign it the Global Administrator-role and Owner-role on the (root) management group.
 
+## v1.0 updates
+
+The module was originally created in 2022. Since then, a lof of things have changed, and from October 15, 2024, Microsoft requires all accounts to have MFA enabled. Due to this, v1.0 of this module introduce breaking changes:
+
+- Log analytics workspace and diagnostic settings for EntraID SignInLogs are moved out of the module
+- Conditional access policy scoped to emergency access users will be created together and require the use of FIDO2 keys by default. This means the module now require Entra ID P2 licenses
+
 <!-- markdownlint-disable MD033 -->
 ## Requirements
 
@@ -28,7 +35,6 @@ The following resources are used by this module:
 - [azurerm_resource_group.alerts](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) (resource)
 - [azurerm_role_assignment.owner](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) (resource)
 - [random_password.emergency_account_password](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) (resource)
-- [random_pet.emergency_account_password](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/pet) (resource)
 - [azuread_domains.initial](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/data-sources/domains) (data source)
 - [azurerm_client_config.core](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/client_config) (data source)
 - [azurerm_management_group.root](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/management_group) (data source)
@@ -36,22 +42,7 @@ The following resources are used by this module:
 <!-- markdownlint-disable MD013 -->
 ## Required Inputs
 
-The following input variables are required:
-
-### <a name="input_log_analytics_workspace"></a> [log\_analytics\_workspace](#input\_log\_analytics\_workspace)
-
-Description: Log Analytics Workspace set up to stream EntraID sign-in logs
-
-Type:
-
-```hcl
-object({
-    id                  = string
-    name                = string
-    resource_group_name = string
-    location            = string
-  })
-```
+No required inputs.
 
 ## Optional Inputs
 
@@ -107,6 +98,14 @@ Default:
 ]
 ```
 
+### <a name="input_azure_monitor_location"></a> [azure\_monitor\_location](#input\_azure\_monitor\_location)
+
+Description: Azure region for Azure Monitor resources used to trigger alerts
+
+Type: `string`
+
+Default: `"westeurope"`
+
 ### <a name="input_conditional_access_policy_id"></a> [conditional\_access\_policy\_id](#input\_conditional\_access\_policy\_id)
 
 Description: ID used to generate conditional access policy. Will create a name on the following format: CA<ID>-Emergency-access-accounts
@@ -131,6 +130,23 @@ Type: `bool`
 
 Default: `false`
 
+### <a name="input_log_analytics_workspace"></a> [log\_analytics\_workspace](#input\_log\_analytics\_workspace)
+
+Description: Log Analytics Workspace set up to stream EntraID sign-in logs
+
+Type:
+
+```hcl
+object({
+    id                  = string
+    name                = string
+    resource_group_name = string
+    location            = string
+  })
+```
+
+Default: `null`
+
 ### <a name="input_number_of_emergency_access_accounts"></a> [number\_of\_emergency\_access\_accounts](#input\_number\_of\_emergency\_access\_accounts)
 
 Description: Define how many accounts to create
@@ -147,14 +163,6 @@ Type: `map(string)`
 
 Default: `{}`
 
-### <a name="input_use_human_readable_passwords"></a> [use\_human\_readable\_passwords](#input\_use\_human\_readable\_passwords)
-
-Description: The default behaviour is to generate a human readable password that is easy to print and store in a safe, set to false to generate complex passwords instead
-
-Type: `bool`
-
-Default: `true`
-
 ### <a name="input_username_prefix"></a> [username\_prefix](#input\_username\_prefix)
 
 Description: Add an optional prefix for the generated display name and user principal name
@@ -167,9 +175,9 @@ Default: `""`
 
 The following outputs are exported:
 
-### <a name="output_emergency_access_account_user_principal_name"></a> [emergency\_access\_account\_user\_principal\_name](#output\_emergency\_access\_account\_user\_principal\_name)
+### <a name="output_emergency_access_account"></a> [emergency\_access\_account](#output\_emergency\_access\_account)
 
-Description: User Principal name for emergency access account
+Description: Username and password for Emergency access account
 
 ## Modules
 

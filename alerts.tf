@@ -1,6 +1,6 @@
 resource "azurerm_resource_group" "alerts" {
   name     = "rg-emergency-access-alerts"
-  location = var.log_analytics_workspace.location
+  location = try(var.log_analytics_workspace.location, var.azure_monitor_location)
 }
 
 resource "azurerm_monitor_action_group" "this" {

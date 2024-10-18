@@ -1,11 +1,10 @@
-output "emergency_access_account_user_principal_name" {
+output "emergency_access_account" {
   value = {
-    for k, u in azuread_user.emergency_access_account : k => u.user_principal_name
+    for k, u in azuread_user.emergency_access_account : k => {
+      user_principal_name = u.user_principal_name
+      password = u.password
+    }
   }
-  description = "User Principal name for emergency access account"
+  description = "Username and password for Emergency access account"
+  sensitive = true
 }
-
-/* output "emergency_user_account_password" {
-  value       = local.emergency_account_password
-  description = "Generated password for Emergeny access account"
-} */

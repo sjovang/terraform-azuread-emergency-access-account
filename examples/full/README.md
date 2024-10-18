@@ -58,19 +58,18 @@ module "emergency_access" {
   alert_settings = {
     use_common_alert_schema = true
     email_receivers = [
-      "trond.sjovang@atea.no"
+      "<email@address.for.alerts"
     ]
     sms_receivers = [
       {
-        country_code = "47"
-        phone_number = "97036089"
+        country_code = "<country code, e.g. 47 for Norway>"
+        phone_number = "<phone number>"
       }
     ]
   }
   alerts_window_duration = "PT5M"
   authentication_strength_policy_combinations = [
     "fido2",
-    "password",
     "temporaryAccessPassOneTime"
   ]
   conditional_access_policy_id        = 42
@@ -82,8 +81,18 @@ module "emergency_access" {
     description          = "example"
     managed-by-terraform = true
   }
-  use_human_readable_passwords = false
   username_prefix              = ""
+}
+
+# Example output from module. Can be used to save username and password in vaults or secrets managers
+output "emergency_access_users" {
+  value = {
+    for k, u in module.emergency_access.emergency_access_account : k => {
+      user_principal_name = u.user_principal_name
+      password = u.password
+    }
+  }
+  sensitive = true
 }
 ```
 
@@ -115,7 +124,11 @@ No optional inputs.
 
 ## Outputs
 
-No outputs.
+The following outputs are exported:
+
+### <a name="output_emergency_access_users"></a> [emergency\_access\_users](#output\_emergency\_access\_users)
+
+Description: Example output from module. Can be used to save username and password in vaults or secrets managers
 
 ## Modules
 

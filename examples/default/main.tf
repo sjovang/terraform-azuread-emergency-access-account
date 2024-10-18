@@ -18,5 +18,5 @@ provider "azurerm" {
 }
 
 module "emergency_access" {
-  source = "sjovang/emergency-access-account/azuread"
+  source = "../.."
 }

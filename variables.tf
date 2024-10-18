@@ -32,6 +32,12 @@ variable "authentication_strength_policy_combinations" {
   description = "Allowed combinations for authentication. temporary access pass are default for initial setup"
 }
 
+variable "azure_monitor_location" {
+  type = string
+  default = "westeurope"
+  description = "Azure region for Azure Monitor resources used to trigger alerts"
+}
+
 variable "conditional_access_policy_id" {
   type        = number
   default     = 98
@@ -62,7 +68,8 @@ variable "log_analytics_workspace" {
     resource_group_name = string
     location            = string
   })
-  nullable    = true
+  default = null
+  nullable = true
   description = "Log Analytics Workspace set up to stream EntraID sign-in logs"
 }
 
@@ -76,12 +83,6 @@ variable "tags" {
   type        = map(string)
   default     = {}
   description = "Add tags to all supported resources"
-}
-
-variable "use_human_readable_passwords" {
-  type        = bool
-  default     = true
-  description = "The default behaviour is to generate a human readable password that is easy to print and store in a safe, set to false to generate complex passwords instead"
 }
 
 variable "username_prefix" {

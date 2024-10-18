@@ -19,28 +19,23 @@ data "azuread_domains" "initial" {
   only_initial = true
 }
 
-resource "random_password" "emergency_account_password" {
-  for_each = var.use_human_readable_passwords == false ? local.emergency_access_accounts : []
-  length   = 64
-}
-
-resource "random_pet" "emergency_account_password" {
-  for_each = var.use_human_readable_passwords == true ? local.emergency_access_accounts : []
-  length   = 10
-}
+data "azurerm_client_config" "core" {}
 
 locals {
   emergency_access_accounts = toset([for u in range(1, var.number_of_emergency_access_accounts + 1) : format("%semergency-access-%02s", var.username_prefix != "" ? format("%s-", var.username_prefix) : "", u)])
 }
 
-
+resource "random_password" "emergency_account_password" {
+  for_each = local.emergency_access_accounts
+  length   = 64
+}
 
 resource "azuread_user" "emergency_access_account" {
   for_each                    = local.emergency_access_accounts
   user_principal_name         = "${each.key}@${data.azuread_domains.initial.domains.0.domain_name}"
   display_name                = each.key
   disable_password_expiration = true
-  password                    = var.use_human_readable_passwords == true ? random_pet.emergency_account_password[each.key].id : random_password.emergency_account_password[each.key].result
+  password                    = random_password.emergency_account_password[each.key].result
 }
 
 resource "azuread_directory_role" "global_administrator" {
@@ -52,8 +47,6 @@ resource "azuread_directory_role_assignment" "global_administrator" {
   role_id             = azuread_directory_role.global_administrator.template_id
   principal_object_id = resource.azuread_user.emergency_access_account[each.key].object_id
 }
-
-data "azurerm_client_config" "core" {}
 
 data "azurerm_management_group" "root" {
   name = data.azurerm_client_config.core.tenant_id
